@@ -171,7 +171,20 @@ function draw(){
   ct(ot,952,'800 '+osz+'px sans-serif',P.accent);
   ct($('motto').value||'',984,'600 22px sans-serif',P.title);
 }
-$('download').onclick=()=>{const a=document.createElement('a');const t=($('title').value||'std').replace(/[^\p{L}\p{N}]+/gu,'-').slice(0,40);a.download='SaveTheDate_'+toneKey+'_'+t+'.png';a.href=C.toDataURL('image/png');a.click();};
+$('download').onclick=()=>{
+  const t=($('title').value||'std').replace(/[^\p{L}\p{N}]+/gu,'-').slice(0,40);
+  const name='SaveTheDate_'+toneKey+'_'+t+'.png';
+  C.toBlob(async(blob)=>{
+    const file=new File([blob],name,{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      try{await navigator.share({files:[file],title:name});}catch(e){}
+      return; // mobile: share sheet -> "Save Image" -> Photos
+    }
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.download=name;a.href=url;a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),2000);
+  },'image/png');
+};
 </script>
 </body>
 </html>
