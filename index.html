@@ -174,11 +174,12 @@ function draw(){
 $('download').onclick=()=>{
   const t=($('title').value||'std').replace(/[^\p{L}\p{N}]+/gu,'-').slice(0,40);
   const name='SaveTheDate_'+toneKey+'_'+t+'.png';
+  const ua=navigator.userAgent||'';
+  const isMobile=/Android|iPhone|iPod/i.test(ua)||/iPad/i.test(ua)||(/Macintosh/i.test(ua)&&navigator.maxTouchPoints>1);
   C.toBlob(async(blob)=>{
     const file=new File([blob],name,{type:'image/png'});
-    if(navigator.canShare&&navigator.canShare({files:[file]})){
-      try{await navigator.share({files:[file],title:name});}catch(e){}
-      return; // mobile: share sheet -> "Save Image" -> Photos
+    if(isMobile&&navigator.canShare&&navigator.canShare({files:[file]})){
+      try{await navigator.share({files:[file],title:name});return;}catch(e){} // κινητό: share -> "Αποθήκευση εικόνας" -> Φωτογραφίες· αν ακυρωθεί, πέφτει σε download
     }
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');a.download=name;a.href=url;a.click();
@@ -186,6 +187,6 @@ $('download').onclick=()=>{
   },'image/png');
 };
 </script>
-<div id="stdver" style="text-align:center;color:#9fb0cc;font-size:11px;padding:10px 10px 20px">Έκδοση: 07 Σεπτεμβρίου 2026, 19:25 · 76ο Σύστημα Προσκόπων Στροβόλου</div>
+<div id="stdver" style="text-align:center;color:#9fb0cc;font-size:11px;padding:10px 10px 20px">Έκδοση: 09 Σεπτεμβρίου 2026, 12:32 · 76ο Σύστημα Προσκόπων Στροβόλου</div>
 </body>
 </html>
